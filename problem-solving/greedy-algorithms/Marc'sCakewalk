@@ -1,0 +1,11 @@
+long marcsCakewalk(vector<int> calorie) {
+    sort(calorie.begin(), calorie.end());
+    //minimum will always be multiplying the largest value by the smallest index, hence reversing the array
+    reverse(calorie.begin(),calorie.end());
+
+    long ans=0;
+    for(int i=0;i<calorie.size();++i){
+        ans += pow(2, i) * calorie[i];
+    }
+    return ans;
+}

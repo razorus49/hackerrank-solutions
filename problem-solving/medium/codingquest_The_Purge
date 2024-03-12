@@ -1,0 +1,118 @@
+#include <iostream>
+#include  <bits/stdc++.h>
+using namespace std;
+
+long long ans=0;
+vector<int> fsize(5175, 0);
+vector<int> dsize(5175,0);
+map<int, bool> mp;
+
+class Graph {
+public:
+    map<int, bool> visited;
+    map<int, list<int> > adj;
+ 
+    // Function to add an edge to graph
+    void addEdge(int v, int w);
+ 
+    // DFS traversal of the vertices
+    // reachable from v
+    void DFS(int v, bool del);
+
+    void print_list();
+};
+ 
+void Graph::addEdge(int v, int w)
+{
+    // Add w to v’s list.
+    adj[v].push_back(w);
+}
+ 
+void Graph::print_list(){
+    for(auto it=adj.begin();it!=adj.end();++it){
+        cout << it->first << ": ";
+        for(int x: it->second){
+            cout << x << " ";
+        }
+        cout << endl;
+    }
+
+}
+
+void Graph::DFS(int v, bool del)
+{
+    // Mark the current node as visited and
+    // print it
+    visited[v] = true;
+    cout << v << " ";
+    if(mp[v] || del) {
+        del= true;
+        ans += fsize[v];
+        }
+    else {
+        del = false;
+        ans += dsize[v];}
+    // Recur for all the vertices adjacent
+    //to this vertex
+    list<int>::iterator i;
+    for (i = adj[v].begin(); i != adj[v].end(); ++i)
+        if (!visited[*i])
+            DFS(*i, del);
+
+}
+ 
+
+
+int main(){
+    freopen("traffic.in", "r",stdin);
+    freopen("traffic.out", "w",stdout); 
+
+    Graph g;
+    int folder;
+    string line;
+
+    int num;
+    while(getline(cin, line)){
+        stringstream ss(line);
+        string filename, dummy;
+
+
+        int i, value, foldername;
+
+        if(ss>>i){
+            num = i;
+            cin.ignore();
+            ss.clear();
+            continue;
+        }
+        
+        ss.clear();
+        ss >> filename >> value;
+        if(!ss.fail()){
+            size_t temp = filename.find("temporary");
+            size_t del = filename.find("delete");
+            if(temp!= string::npos || del!=string::npos) {
+
+                dsize[num]+= value;}
+            fsize[num] += value;
+        }
+         else {
+            ss.clear();
+            ss >> dummy >>  foldername;
+            size_t temp = filename.find("temporary");
+            size_t del = filename.find("delete");
+
+            if(temp!= string::npos || del!=string::npos) mp[foldername] = true;
+            else mp[foldername] = false;
+            g.addEdge(num, foldername);
+            
+        }
+    }
+
+
+    g.print_list();
+    g.DFS(0, false);
+    cout << endl;
+    cout << "answer " << ans ;
+    return 0;
+}
